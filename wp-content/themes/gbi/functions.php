@@ -262,3 +262,178 @@ if( function_exists('acf_add_options_page') ) {
         'page_title' 	=> 'GoldSilver Settings'
     ));
 }
+
+// Search on custom fields
+function custom_search_join ($join){
+    global $pagenow, $wpdb;
+    $types = ['product'];
+    // I want the filter only when performing a search on edit page of Custom Post Type in $types array
+    if ( is_admin() && $pagenow=='edit.php' && in_array( $_GET['post_type'], $types ) && isset( $_GET['s'] ) ) {
+        $join .='LEFT JOIN '.$wpdb->postmeta. ' ON '. $wpdb->posts . '.ID = ' . $wpdb->postmeta . '.post_id ';
+    }
+    return $join;
+}
+add_filter('posts_join', 'custom_search_join' );
+function custom_search_where( $where ){
+    global $pagenow, $wpdb;
+    $types = ['product'];
+    // I want the filter only when performing a search on edit page of Custom Post Type in $types array
+    if ( is_admin() && $pagenow=='edit.php' && in_array( $_GET['post_type'], $types ) && isset( $_GET['s'] ) ) {
+        $where = preg_replace(
+            "/\(\s*".$wpdb->posts.".post_title\s+LIKE\s*(\'[^\']+\')\s*\)/",
+            "(".$wpdb->posts.".post_title LIKE $1) OR (".$wpdb->postmeta.".meta_value LIKE $1)", $where );
+    }
+    return $where;
+}
+add_filter( 'posts_where', 'custom_search_where' );
+function custom_search_distinct( $where ){
+    global $pagenow, $wpdb;
+    $types = ['product'];
+    if ( is_admin() && $pagenow=='edit.php' && in_array( $_GET['post_type'], $types ) && isset( $_GET['s'] ) ) {
+        return "DISTINCT";
+
+    }
+    return $where;
+}
+add_filter( 'posts_distinct', 'custom_search_distinct' );
+
+function ac_custom_column_settings_c26bb859() {
+
+    ac_register_columns( 'product', array(
+        array(
+            'columns' => array(
+                'title' => array(
+                    'type' => 'title',
+                    'label' => 'Title',
+                    'width' => '20',
+                    'width_unit' => '%',
+                    'edit' => 'off',
+                    'sort' => 'on',
+                    'name' => 'title'
+                ),
+                '59a68d24c7c80' => array(
+                    'type' => 'column-acf_field',
+                    'label' => 'SKU',
+                    'width' => '10',
+                    'width_unit' => '%',
+                    'field' => 'field_59a6881980467',
+                    'character_limit' => '20',
+                    'edit' => 'off',
+                    'sort' => 'on',
+                    'filter' => 'off',
+                    'filter_label' => 'Filter by SKU',
+                    'name' => '59a68d24c7c80'
+                ),
+                '59a6948a67c3d' => array(
+                    'type' => 'column-acf_field',
+                    'label' => 'Excerpt',
+                    'width' => '',
+                    'width_unit' => '%',
+                    'field' => 'field_59a682e2fd282',
+                    'excerpt_length' => '20',
+                    'edit' => 'on',
+                    'sort' => 'off',
+                    'filter' => 'off',
+                    'filter_label' => '',
+                    'name' => '59a6948a67c3d'
+                ),
+                '59a6948a69322' => array(
+                    'type' => 'column-acf_field',
+                    'label' => 'Media',
+                    'width' => '',
+                    'width_unit' => '%',
+                    'field' => 'field_599d320a84321',
+                    'sub_field' => 'field_599d331184323',
+                    'image_size' => 'thumbnail',
+                    'image_size_w' => '80',
+                    'image_size_h' => '80',
+                    'before' => '',
+                    'after' => '',
+                    'separator' => '',
+                    'name' => '59a6948a69322'
+                )
+            ),
+            'layout' => array(
+                'id' => '59a69435ef96b',
+                'name' => 'Product Media',
+                'roles' => false,
+                'users' => false,
+                'read_only' => false
+            )
+
+        ),
+        array(
+            'columns' => array(
+                'title' => array(
+                    'type' => 'title',
+                    'label' => 'Title',
+                    'width' => '20',
+                    'width_unit' => '%',
+                    'edit' => 'off',
+                    'sort' => 'on',
+                    'name' => 'title'
+                ),
+                '59a68d24c7c80' => array(
+                    'type' => 'column-acf_field',
+                    'label' => 'SKU',
+                    'width' => '5',
+                    'width_unit' => '%',
+                    'field' => 'field_59a6881980467',
+                    'character_limit' => '20',
+                    'edit' => 'off',
+                    'sort' => 'on',
+                    'filter' => 'off',
+                    'filter_label' => 'Filter by SKU',
+                    'name' => '59a68d24c7c80'
+                ),
+                '59a6939cb8c3d' => array(
+                    'type' => 'column-acf_field',
+                    'label' => 'Status',
+                    'width' => '20',
+                    'width_unit' => '%',
+                    'field' => 'field_59a68fc0f7ffa',
+                    'edit' => 'on',
+                    'sort' => 'on',
+                    'filter' => 'on',
+                    'filter_label' => 'Filter by Availability Status',
+                    'name' => '59a6939cb8c3d'
+                ),
+                '59a68d24d1f2a' => array(
+                    'type' => 'column-taxonomy',
+                    'label' => 'Type',
+                    'width' => '10',
+                    'width_unit' => '%',
+                    'taxonomy' => 'metal-type',
+                    'edit' => 'off',
+                    'sort' => 'on',
+                    'filter' => 'on',
+                    'filter_label' => 'Filter by Type',
+                    'name' => '59a68d24d1f2a',
+                    'enable_term_creation' => 'off'
+                ),
+                '59a68d24d427e' => array(
+                    'type' => 'column-taxonomy',
+                    'label' => 'Shape',
+                    'width' => '10',
+                    'width_unit' => '%',
+                    'taxonomy' => 'metal-shape',
+                    'edit' => 'off',
+                    'sort' => 'on',
+                    'filter' => 'on',
+                    'filter_label' => 'Filter by Shape',
+                    'name' => '59a68d24d427e',
+                    'enable_term_creation' => 'off'
+                )
+            ),
+            'layout' => array(
+                'id' => '59a6940ecc606',
+                'name' => 'Product Search & Status',
+                'roles' => false,
+                'users' => false,
+                'read_only' => false
+            )
+
+        )
+    ) );
+}
+add_action( 'ac/ready', 'ac_custom_column_settings_c26bb859' );
