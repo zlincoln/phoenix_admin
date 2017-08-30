@@ -1,11 +1,11 @@
 <?php
 
-add_action('init', 'create_product_post_type');
-add_action('init', 'create_book_post_type');
-add_action('init', 'create_question_post_type');
-add_action('init', 'create_learn_article_post_type');
+add_action('init', 'createProductPostType', 0);
+add_action('init', 'createBookPostType', 0);
+add_action('init', 'createQuestionPostType', 0);
+add_action('init', 'createLearnArticlePostType', 0);
 
-function create_product_post_type() {
+function createProductPostType() {
     $labels = array(
         'name'               => _x('Products', 'post type general name'),
         'singular_name'      => _x('Product', 'post type singular name'),
@@ -33,14 +33,93 @@ function create_product_post_type() {
         'has_archive'        => true,
         'show_ui'            => true,
         'capability_type'    => 'post',
-        'menu_icon'   => 'dashicons-products',
-        'taxonomies' => array('category')
+        'menu_icon'   => 'dashicons-products'
     );
 
     register_post_type('product', $args);
+
+    register_taxonomy(
+        'metal-type',
+        'product',
+        array(
+            'label' =>  'Type',
+            'rewrite' => array('slug' => 'metal-type'),
+            'hierarchical' => true,
+        )
+    );
+
+    register_taxonomy(
+        'metal-shape',
+        'product',
+        array(
+            'label' =>  'Shape',
+            'rewrite' => array('slug' => 'metal-shape'),
+            'hierarchical' => true,
+        )
+    );
+
+    register_taxonomy(
+        'metal-weight',
+        'product',
+        array(
+            'label' =>  'Weight',
+            'rewrite' => array('slug' => 'metal-weight'),
+            'hierarchical' => true,
+        )
+    );
+
+    register_taxonomy(
+        'metal-diameter',
+        'product',
+        array(
+            'label' =>  'Diameter',
+            'rewrite' => array('slug' => 'metal-diameter'),
+            'hierarchical' => true,
+        )
+    );
+
+    register_taxonomy(
+        'metal-thickness',
+        'product',
+        array(
+            'label' =>  'Thickness',
+            'rewrite' => array('slug' => 'metal-thickness'),
+            'hierarchical' => true,
+        )
+    );
+
+    register_taxonomy(
+        'metal-eligibility',
+        'product',
+        array(
+            'label' =>  'Eligibility',
+            'rewrite' => array('slug' => 'metal-eligibility'),
+            'hierarchical' => true,
+        )
+    );
+
+    register_taxonomy(
+        'metal-face-value',
+        'product',
+        array(
+            'label' =>  'Face Value',
+            'rewrite' => array('slug' => 'metal-face-value'),
+            'hierarchical' => true,
+        )
+    );
+
+    register_taxonomy(
+        'metal-purity',
+        'product',
+        array(
+            'label' =>  'Purity',
+            'rewrite' => array('slug' => 'metal-purity'),
+            'hierarchical' => true,
+        )
+    );
 }
 
-function create_book_post_type() {
+function createBookPostType() {
     $labels = array(
         'name'               => _x('Books', 'post type general name'),
         'singular_name'      => _x('Book', 'post type singular name'),
@@ -74,7 +153,7 @@ function create_book_post_type() {
     register_post_type('book', $args);
 }
 
-function create_question_post_type() {
+function createQuestionPostType() {
     $labels = array(
         'name'               => _x('FAQs', 'post type general name'),
         'singular_name'      => _x('FAQ', 'post type singular name'),
@@ -98,7 +177,7 @@ function create_question_post_type() {
         'public'             => true,
         'publicly_queryable' => true,
         'menu_position'      => 5,
-        'supports'           => array('title'),
+        'supports'           => array('title', 'editor'),
         'has_archive'        => true,
         'show_ui'            => true,
         'capability_type'    => 'post',
@@ -106,9 +185,19 @@ function create_question_post_type() {
     );
 
     register_post_type('question', $args);
+
+    register_taxonomy(
+        'faq-category',
+        'question',
+        array(
+            'label' =>  'Category',
+            'rewrite' => array('slug' => 'faq-category'),
+            'hierarchical' => true,
+        )
+    );
 }
 
-function create_learn_article_post_type() {
+function createLearnArticlePostType() {
     $labels = array(
         'name'               => _x('Learn Articles', 'post type general name'),
         'singular_name'      => _x('Learn Article', 'post type singular name'),
@@ -140,4 +229,36 @@ function create_learn_article_post_type() {
     );
 
     register_post_type('learn_article', $args);
+}
+
+add_action('acf/render_field_settings/type=text', 'add_readonly_and_disabled_to_text_field');
+function add_readonly_and_disabled_to_text_field($field) {
+    acf_render_field_setting($field, array(
+        'label'      => __('Read Only?','acf'),
+        'instructions'  => '',
+        'type'      => 'radio',
+        'name'      => 'readonly',
+        'choices'    => array(
+            1        => __("Yes",'acf'),
+            0        => __("No",'acf'),
+        ),
+        'layout'  =>  'horizontal',
+    ));
+    acf_render_field_setting($field, array(
+        'label'      => __('Disabled?','acf'),
+        'instructions'  => '',
+        'type'      => 'radio',
+        'name'      => 'disabled',
+        'choices'    => array(
+            1        => __("Yes",'acf'),
+            0        => __("No",'acf'),
+        ),
+        'layout'  =>  'horizontal',
+    ));
+}
+
+if( function_exists('acf_add_options_page') ) {
+    acf_add_options_page(array(
+        'page_title' 	=> 'GoldSilver Settings'
+    ));
 }
